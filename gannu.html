@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Class 8 HTML Quiz - DAV (Random 10/50 Questions)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            text-align: center; 
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        h2 { 
+            text-align: center; 
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .timer {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 10px;
+            border: 2px solid #ffeaa7;
+        }
+        .stats {
+            text-align: center;
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 18px;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 20px;
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .question.reviewed {
+            border-color: #27ae60;
+            background: #f0fff4;
+        }
+        .question-number {
+            background: #3498db;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .question p {
+            margin: 0 0 15px 0;
+            font-weight: bold;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        .options label {
+            display: block;
+            margin: 10px 0;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            position: relative;
+        }
+        .options label:hover:not(.feedback-applied) {
+            border-color: #3498db;
+            background: #ebf3fd;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        /* Correct Answer Feedback */
+        .options label.correct {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+        }
+        .options label.correct::before {
+            content: "✅ Correct";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        /* Wrong Answer Feedback */
+        .options label.wrong {
+            background: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+        }
+        .options label.wrong::before {
+            content: "❌ Wrong";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #dc3545;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .btn-area {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-main, .btn-skip {
+            padding: 15px 35px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .btn-main {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        }
+        .btn-main:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46,204,113,0.6);
+        }
+        .btn-skip {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+        .btn-skip:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(243,156,18,0.6);
+        }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            font-size: 22px;
+            text-align: center;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+        .excellent { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .good { background: #fff3cd; color: #856404; border: 2px solid #ffeaa7; }
+        .average { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+        .quiz-over { display: none; }
+        .review-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #3498db;
+        }
+        .review-section h3 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        .review-question {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border-left: 5px solid #3498db;
+        }
+        .review-question.correct-review {
+            border-left-color: #28a745;
+            background: #f0fff4;
+        }
+        .review-question.wrong-review {
+            border-left-color: #dc3545;
+            background: #fdf2f2;
+        }
+        .review-score {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .score-excellent { color: #28a745; }
+        .score-good { color: #f39c12; }
+        .score-average { color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏫 DAV Public School</h1>
+    <h2>📚 Class 8 ICT - HTML Quiz (50 Questions Pool)</h2>
+    
+    <div class="stats">
+        <strong>Quiz Format:</strong> 10 Random Questions | ⏱️ 20 Seconds | ✅ Visual Feedback | 📊 Detailed Review
+    </div>
+
+    <div class="timer" id="timer">⏱️ Time Left: 20 seconds</div>
+
+    <form id="quizForm">
+        <div id="questionsContainer"></div>
+        
+        <div class="btn-area">
+            <button type="button" id="submitBtn" class="btn-main" onclick="checkQuiz()">✅ Submit Quiz</button>
+            <button type="button" id="skipBtn" class="btn-skip" onclick="skipQuestion()">⏭️ Skip Question</button>
+        </div>
+    </form>
+
+    <div id="result" class="quiz-over"></div>
+</div>
+
+<script>
+    // Complete question bank (50 questions for DAV Class 8 HTML syllabus) [web:21][web:22][web:27][web:38]
+    const allQuestions = [
+        {
+            question: "1. HTML stands for:",
+            options: ["High Text Machine Language", "HyperText Markup Language", "Hyperlink Text Making Language", "Home Tool Markup Language"],
+            answer: 1
+        },
+        {
+            question: "2. Which tag is used to display a paragraph?",
+            options: ["&lt;body&gt;", "&lt;br&gt;", "&lt;p&gt;", "&lt;h1&gt;"],
+            answer: 2
+        },
+        {
+            question: "3. Which HTML tag creates the largest heading?",
+            options: ["&lt;h6&gt;", "&lt;h1&gt;", "&lt;head&gt;", "&lt;title&gt;"],
+            answer: 1
+        },
+        {
+            question: "4. Which tag inserts a line break?",
+            options: ["&lt;hr&gt;", "&lt;br&gt;", "&lt;lb&gt;", "&lt;break&gt;"],
+            answer: 1
+        },
+        {
+            question: "5. Which is an empty (non-container) HTML tag?",
+            options: ["&lt;p&gt;", "&lt;html&gt;", "&lt;body&gt;", "&lt;br&gt;"],
+            answer: 3
+        },
+        {
+            question: "6. Which tag makes text bold?",
+            options: ["&lt;i&gt;", "&lt;u&gt;", "&lt;b&gt;", "&lt;font&gt;"],
+            answer: 2
+        },
+        {
+            question: "7. Which tag creates an unordered (bulleted) list?",
+            options: ["&lt;ol&gt;", "&lt;ul&gt;", "&lt;li&gt;", "&lt;list&gt;"],
+            answer: 1
+        },
+        {
+            question: "8. Which tag inserts an image?",
+            options: ["&lt;image&gt;", "&lt;img&gt;", "&lt;pic&gt;", "&lt;src&gt;"],
+            answer: 1
+        },
+        {
+            question: "9. What attribute specifies image source in &lt;img&gt; tag?",
+            options: ["href", "src", "link", "alt"],
+            answer: 1
+        },
+        {
+            question: "10. Which tag creates a hyperlink?",
+            options: ["&lt;link&gt;", "&lt;a&gt;", "&lt;href&gt;", "&lt;hyper&gt;"],
+            answer: 1
+        },
+        {
+            question: "11. What is the correct extension for HTML files?",
+            options: [".html", ".htm", ".html or .htm", ".txt"],
+            answer: 2
+        },
+        {
+            question: "12. Which tag is used inside &lt;head&gt; for page title?",
+            options: ["&lt;head&gt;", "&lt;title&gt;", "&lt;body&gt;", "&lt;h1&gt;"],
+            answer: 1
+        },
+        {
+            question: "13. Which tag creates a horizontal line?",
+            options: ["&lt;line&gt;", "&lt;hr&gt;", "&lt;br&gt;", "&lt;divider&gt;"],
+            answer: 1
+        },
+        {
+            question: "14. Which attribute aligns content to center?",
+            options: ["center", "align=center", "text-align", "middle"],
+            answer: 1
+        },
+        {
+            question: "15. Which tag makes text italic?",
+            options: ["&lt;b&gt;", "&lt;i&gt;", "&lt;u&gt;", "&lt;strong&gt;"],
+            answer: 1
+        },
+        {
+            question: "16. What does WWW stand for?",
+            options: ["World Web Wide", "World Wide Web", "Wide World Web", "Web World Wide"],
+            answer: 1
+        },
+        {
+            question: "17. Which is a container tag?",
+            options: ["&lt;br&gt;", "&lt;hr&gt;", "&lt;p&gt;", "&lt;img&gt;"],
+            answer: 2
+        },
+        {
+            question: "18. First tag in any HTML document?",
+            options: ["&lt;head&gt;", "&lt;title&gt;", "&lt;html&gt;", "&lt;body&gt;"],
+            answer: 2
+        },
+        {
+            question: "19. Which tag creates ordered (numbered) list?",
+            options: ["&lt;ul&gt;", "&lt;ol&gt;", "&lt;li&gt;", "&lt;list&gt;"],
+            answer: 1
+        },
+        {
+            question: "20. Attribute for background color in &lt;body&gt;?",
+            options: ["background", "bgcolor", "color", "backcolor"],
+            answer: 1
+        },
+        {
+            question: "21. &lt;head&gt; tag contains?",
+            options: ["Page content", "Title and meta info", "Images", "Paragraphs"],
+            answer: 1
+        },
+        {
+            question: "22. Smallest heading tag?",
+            options: ["&lt;h1&gt;", "&lt;h3&gt;", "&lt;h6&gt;", "&lt;h10&gt;"],
+            answer: 2
+        },
+        {
+            question: "23. Tag for underlined text?",
+            options: ["&lt;b&gt;", "&lt;i&gt;", "&lt;u&gt;", "&lt;strong&gt;"],
+            answer: 2
+        },
+        {
+            question: "24. List item tag?",
+            options: ["&lt;list&gt;", "&lt;ol&gt;", "&lt;li&gt;", "&lt;ul&gt;"],
+            answer: 2
+        },
+        {
+            question: "25. Which software creates HTML?",
+            options: ["Web browser", "Text editor", "Paint", "Excel"],
+            answer: 1
+        },
+        {
+            question: "26. HTML tags use which brackets?",
+            options: ["{}", "()", "[]", "&lt;&gt;"],
+            answer: 3
+        },
+        {
+            question: "27. End tag uses what symbol?",
+            options: ["/", "\\", "-", "+"],
+            answer: 0
+        },
+        {
+            question: "28. Default text alignment?",
+            options: ["Center", "Left", "Right", "Justify"],
+            answer: 1
+        },
+        {
+            question: "29. Tag for table row?",
+            options: ["&lt;row&gt;", "&lt;tr&gt;", "&lt;td&gt;", "&lt;table&gt;"],
+            answer: 1
+        },
+        {
+            question: "30. Attribute for link color?",
+            options: ["link", "color", "alink", "href"],
+            answer: 2
+        },
+        {
+            question: "31. Empty tags have?",
+            options: ["Opening and closing", "Only opening", "Only closing", "No tags"],
+            answer: 1
+        },
+        {
+            question: "32. &lt;body&gt; tag attribute for text color?",
+            options: ["color", "textcolor", "text", "txtcolor"],
+            answer: 0
+        },
+        {
+            question: "33. Which starts HTML document structure?",
+            options: ["&lt;!DOCTYPE html&gt;", "&lt;html&gt;", "&lt;head&gt;", "&lt;body&gt;"],
+            answer: 0
+        },
+        {
+            question: "34. Purpose of &lt;title&gt; tag?",
+            options: ["Page content", "Browser tab", "Footer", "Header"],
+            answer: 1
+        },
+        {
+            question: "35. Tag pair means?",
+            options: ["Container tag", "Empty tag", "Single tag", "Image tag"],
+            answer: 0
+        },
+        {
+            question: "36. Hyperlink attribute?",
+            options: ["src", "link", "href", "url"],
+            answer: 2
+        },
+        {
+            question: "37. &lt;html&gt; tag is?",
+            options: ["Container", "Empty", "Image", "Link"],
+            answer: 0
+        },
+        {
+            question: "38. WYSIWYG means?",
+            options: ["What You See Is What You Get", "Write Your Style In Web", "Web You See Is Web", "What You Style Is What You Get"],
+            answer: 0
+        },
+        {
+            question: "39. Tags are written in?",
+            options: ["Lowercase only", "Uppercase only", "Both cases", "Numbers"],
+            answer: 2
+        },
+        {
+            question: "40. &lt;font&gt; tag changes?",
+            options: ["Size and color", "Only size", "Only color", "Bold only"],
+            answer: 0
+        },
+        {
+            question: "41. Attribute values use?",
+            options: ["Double quotes", "Single quotes", "No quotes", "Both quotes"],
+            answer: 3
+        },
+        {
+            question: "42. &lt;center&gt; tag aligns?",
+            options: ["Left", "Right", "Center", "Top"],
+            answer: 2
+        },
+        {
+            question: "43. Table cell tag?",
+            options: ["&lt;cell&gt;", "&lt;tr&gt;", "&lt;td&gt;", "&lt;row&gt;"],
+            answer: 2
+        },
+        {
+            question: "44. First element in &lt;html&gt;?",
+            options: ["&lt;body&gt;", "&lt;head&gt;", "&lt;title&gt;", "&lt;p&gt;"],
+            answer: 1
+        },
+        {
+            question: "45. Save HTML with extension?",
+            options: [".doc", ".html", ".txt", ".pdf"],
+            answer: 1
+        },
+        {
+            question: "46. &lt;!-- --&gt; creates?",
+            options: ["Link", "Image", "Comment", "Bold"],
+            answer: 2
+        },
+        {
+            question: "47. View HTML source using?",
+            options: ["F12", "Ctrl+P", "Ctrl+S", "Alt+F4"],
+            answer: 0
+        },
+        {
+            question: "48. &lt;strong&gt; tag does what?",
+            options: ["Italic", "Bold", "Underline", "Color"],
+            answer: 1
+        },
+        {
+            question: "49. &lt;em&gt; tag creates?",
+            options: ["Bold", "Italic", "Link", "List"],
+            answer: 1
+        },
+        {
+            question: "50. Basic structure has how many main parts?",
+            options: ["2", "3", "4", "5"],
+            answer: 0
+        }
+    ];
+
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let timeLeft = 20;
+    let timerInterval;
+    let score = 0;
+    let totalQuestions = 10;
+    let skippedCount = 0;
+    let answeredCount = 0;
+    let userAnswers = []; // Track user answers for review
+
+    // Initialize quiz
+    function initQuiz() {
+        currentQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
+        currentQuestionIndex = 0;
+        score = 0;
+        skippedCount = 0;
+        answeredCount = 0;
+        userAnswers = new Array(totalQuestions).fill(null); // Track answers
+        displayQuestion();
+        startTimer();
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('skipBtn').disabled = false;
+    }
+
+    function displayQuestion() {
+        const container = document.getElementById('questionsContainer');
+        if (currentQuestionIndex >= totalQuestions) {
+            container.innerHTML = '<div class="quiz-over"></div>';
+            return;
+        }
+
+        const q = currentQuestions[currentQuestionIndex];
+        let html = `<div class="question" id="currentQuestion">
+            <span class="question-number">Question ${currentQuestionIndex + 1}/${totalQuestions}</span>
+            <p>${q.question}</p>
+            <div class="options">`;
+        
+        q.options.forEach((option, index) => {
+            const checked = userAnswers[currentQuestionIndex] === index ? 'checked' : '';
+            html += `<label data-index="${index}">
+                <input type="radio" name="q${currentQuestionIndex}" value="${index}" ${checked}>
+                ${option}
+            </label>`;
+        });
+        
+        html += '</div></div>';
+        container.innerHTML = html;
+    }
+
+    function startTimer() {
+        timeLeft = 20;
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                showFeedback();
+                setTimeout(nextQuestion, 2000);
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        document.getElementById('timer').textContent = `⏱️ Time Left: ${timeLeft} seconds`;
+        document.getElementById('timer').style.color = timeLeft <= 5 ? '#e74c3c' : '#27ae60';
+    }
+
+    function showFeedback() {
+        checkCurrentAnswerWithFeedback();
+    }
+
+    function checkCurrentAnswerWithFeedback() {
+        const radios = document.querySelectorAll(`input[name="q${currentQuestionIndex}"]:checked`);
+        const correctAnswerIndex = currentQuestions[currentQuestionIndex].answer;
+        const allLabels = document.querySelectorAll('#currentQuestion label');
+        
+        // Remove previous feedback
+        allLabels.forEach(label => {
+            label.classList.remove('correct', 'wrong');
+        });
+
+        if (radios.length > 0) {
+            const selectedValue = parseInt(radios[0].value);
+            userAnswers[currentQuestionIndex] = selectedValue;
+            answeredCount++;
+            
+            if (selectedValue === correctAnswerIndex) {
+                score++;
+                allLabels[correctAnswerIndex].classList.add('correct');
+            } else {
+                allLabels[selectedValue].classList.add('wrong');
+                allLabels[correctAnswerIndex].classList.add('correct');
+            }
+        } else {
+            // Show correct answer if no selection
+            allLabels[correctAnswerIndex].classList.add('correct');
+            userAnswers[currentQuestionIndex] = null;
+        }
+        
+        document.getElementById('currentQuestion').classList.add('reviewed');
+    }
+
+    function nextQuestion() {
+        clearInterval(timerInterval);
+        currentQuestionIndex++;
+        
+        if (currentQuestionIndex < totalQuestions) {
+            displayQuestion();
+            startTimer();
+        } else {
+            showResults();
+        }
+    }
+
+    function skipQuestion() {
+        clearInterval(timerInterval);
+        skippedCount++;
+        userAnswers[currentQuestionIndex] = -1; // Mark as skipped
+        showFeedback();
+        setTimeout(nextQuestion, 2000);
+    }
+
+    function checkQuiz() {
+        clearInterval(timerInterval);
+        showFeedback();
+        setTimeout(() => {
+            while (currentQuestionIndex < totalQuestions - 1) {
+                currentQuestionIndex++;
+                checkCurrentAnswer();
+            }
+            showResults();
+        }, 2000);
+    }
+
+    function checkCurrentAnswer() {
+        const radios = document.querySelectorAll(`input[name="q${currentQuestionIndex}"]:checked`);
+        if (radios.length > 0) {
+            const selectedValue = parseInt(radios[0].value);
+            userAnswers[currentQuestionIndex] = selectedValue;
+            if (selectedValue === currentQuestions[currentQuestionIndex].answer) {
+                score++;
+            }
+            answeredCount++;
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quizForm').style.display = 'none';
+        document.getElementById('timer').style.display = 'none';
+        
+        const percentage = totalQuestions > 0 ? (score / totalQuestions) * 100 : 0;
+        let remark = '';
+        let resultClass = '';
+        let scoreClass = '';
+        
+        if (percentage >= 80) {
+            remark = "🏆 Excellent! Outstanding HTML knowledge!";
+            resultClass = 'excellent';
+            scoreClass = 'score-excellent';
+        } else if (percentage >= 60) {
+            remark = "👍 Good job! Keep practicing HTML tags.";
+            resultClass = 'good';
+            scoreClass = 'score-good';
+        } else if (percentage >= 40) {
+            remark = "📚 Fair attempt. Revise HTML structure & tags.";
+            resultClass = 'average';
+            scoreClass = 'score-average';
+        } else {
+            remark = "💪 Keep learning! Practice more HTML questions.";
+            resultClass = 'average';
+            scoreClass = 'score-average';
+        }
+
+        let reviewHTML = '<div class="review-section">';
+        reviewHTML += '<h3>📋 Detailed Review - All Questions</h3>';
+        
+        currentQuestions.forEach((q, index) => {
+            const userAnswer = userAnswers[index];
+            const correctAnswer = q.answer;
+            const isCorrect = userAnswer === correctAnswer;
+            const isSkipped = userAnswer === -1 || userAnswer === null;
+            
+            reviewHTML += `<div class="review-question ${isCorrect ? 'correct-review' : isSkipped ? '' : 'wrong-review'}">`;
+            reviewHTML += `<p><strong>Q${index + 1}:</strong> ${q.question}</p>`;
+            
+            if (isSkipped) {
+                reviewHTML += `<p><em>⏭️ Skipped</em></p>`;
+            } else {
+                reviewHTML += `<p><strong>Your Answer:</strong> ${q.options[userAnswer]} `;
+                reviewHTML += isCorrect ? '<span style="color:#28a745">✅ Correct</span>' : '<span style="color:#dc3545">❌ Wrong</span></p>';
+            }
+            
+            reviewHTML += `<p><strong>✅ Correct Answer:</strong> <span style="background:#d4edda;padding:4px 8px;border-radius:4px;font-weight:bold;">${q.options[correctAnswer]}</span></p>`;
+            reviewHTML += '</div>';
+        });
+        
+        reviewHTML += '</div>';
+
+        document.getElementById('result').innerHTML = `
+            <div class="${resultClass}">
+                <h2>Quiz Complete! 🎉</h2>
+                <div class="review-score ${scoreClass}">
+                    <div>${score}/${totalQuestions}</div>
+                    <div style="font-size:18px;margin-top:5px;">(${percentage.toFixed(0)}%)</div>
+                </div>
+                <p>✅ Answered: ${answeredCount} | ⏭️ Skipped: ${skippedCount}</p>
+                <p>${remark}</p>
+                ${reviewHTML}
+                <button onclick="location.reload()" class="btn-main" style="margin-top: 25px;">🔄 Take New Quiz</button>
+            </div>
+        `;
+        document.getElementById('result').classList.remove('quiz-over');
+    }
+
+    // Start quiz when page loads
+    window.onload = initQuiz;
+</script>
+
+</body>
+</html>
